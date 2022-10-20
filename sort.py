@@ -2,29 +2,6 @@ import re
 import shutil
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
-
-
-def sort_folder(folder):
-    """
-    - зображення ('JPEG', 'PNG', 'JPG', 'SVG') переносимо до папки images
-    - документи ('DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX') переносимо до папки documents
-    - аудіо файли ('MP3', 'OGG', 'WAV', 'AMR') переносимо до audio
-    - відео ('AVI', 'MP4', 'MOV', 'MKV') файли до video
-    - архіви ('ZIP', 'GZ', 'TAR') розпаковуються та їх вміст переноситься до папки archives
-
-    !!!
-    Щоб скрипт міг пройти на будь-яку глибину вкладеності,
-    функція обробки папок повинна рекурсивно викликати сама себе, коли їй зустрічаються вкладенні папки.
-
-
-    """
-
-    pass
-
-
 def normalize(filename) -> str:
     """  Функція normalize:
 
@@ -56,6 +33,41 @@ def normalize(filename) -> str:
     return normalized_filename
 
 
+def sort_folder(folder):
+    """
+    - зображення ('JPEG', 'PNG', 'JPG', 'SVG') переносимо до папки images
+    - документи ('DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX') переносимо до папки documents
+    - аудіо файли ('MP3', 'OGG', 'WAV', 'AMR') переносимо до audio
+    - відео ('AVI', 'MP4', 'MOV', 'MKV') файли до video
+    - архіви ('ZIP', 'GZ', 'TAR') розпаковуються та їх вміст переноситься до папки archives
+
+    !!!
+    Щоб скрипт міг пройти на будь-яку глибину вкладеності,
+    функція обробки папок повинна рекурсивно викликати сама себе, коли їй зустрічаються вкладенні папки.
+
+
+    """
+
+    # визначаємо розширення за якими будемо сортувати файли
+    image_ext = ['JPEG', 'PNG', 'JPG', 'SVG', ]
+    document_ext = ['DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX', ]
+    audio_ext = ['MP3', 'OGG', 'WAV', 'AMR', ]
+    video_ext = ['AVI', 'MP4', 'MOV', 'MKV', ]
+    archive_ext = ['ZIP', 'GZ', 'TAR', ]
+
+    # списки файлів у кожній категорії
+    image_files = []
+    document_files = []
+    audio_files = []
+    video_files = []
+    archive_files = []
+
+    known_ext = []  # перелік усіх відомих розширень
+    unknown_ext = []  # перелік НЕ відомих розширень
+
+    ignore_folders = ['images', 'documents', 'audio', 'video', 'archives', ]
+
+    pass
 
 
 if __name__ == '__main__':
