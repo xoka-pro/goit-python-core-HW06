@@ -85,6 +85,40 @@ def sort_folder(folder: Path) -> list:
     known_ext = []  # перелік усіх відомих розширень
     unknown_ext = []  # перелік НЕ відомих розширень
 
+    for file in folder.iterdir():
+        if file.suffix[1:].upper() in image_ext:
+            image_folder = Path('images')
+            file.replace(image_folder / normalize(file.name))
+            known_ext.append(file.suffix)
+            image_files.append(file.name)
+
+        if file.suffix[1:].upper() in document_ext:
+            document_folder = Path('documents')
+            file.replace(document_folder / normalize(file.name))
+            known_ext.append(file.suffix)
+            document_files.append(file.name)
+
+        if file.suffix[1:].upper() in audio_ext:
+            audio_folder = Path('audio')
+            file.replace(audio_folder / normalize(file.name))
+            known_ext.append(file.suffix)
+            audio_files.append(file.name)
+
+        if file.suffix[1:].upper() in video_ext:
+            video_folder = Path('video')
+            file.replace(video_folder / normalize(file.name))
+            known_ext.append(file.suffix)
+            video_files.append(file.name)
+
+        if file.suffix[1:].upper() in archive_ext:
+            archive_folder = Path('archives')
+            file.replace(archive_folder / normalize(file.name))
+            known_ext.append(file.suffix)
+            archive_files.append(file.name)
+
+        if file.suffix[1:].upper() not in image_ext or document_ext or audio_ext or video_ext or archive_ext:
+            normalize(file.name)
+            unknown_ext.append(file.suffix)
 
     return known_ext, unknown_ext
 
@@ -93,3 +127,4 @@ if __name__ == '__main__':
     output_folder = Path('.')
     print(normalize('ТеСтОвИй ТЕКСТ іїє 12345 <>@#$"".jpg'))
     init(output_folder)
+    sort_folder(output_folder)
