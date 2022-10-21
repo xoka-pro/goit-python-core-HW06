@@ -1,22 +1,32 @@
 import re
 import shutil
-import os
 import sys
 from pathlib import Path
 
 
-found_folders = []
+target_folders = ['images', 'documents', 'audio', 'video', 'archives', ]
 
 
 def init(folder: Path) -> None:
     """ функція створює цільові директорії"""
 
-    folders = ['images', 'documents', 'audio', 'video', 'archives', ]
-
-    for element in folders:
+    for element in target_folders:
         new_folder = folder / element
         new_folder.mkdir(exist_ok=True, parents=True)
+    return None
 
+
+def cleaner(folder: Path) -> None:
+    """функція рекурсивно видаляє порожні директорії в робочій директорії виключаючі цільові"""
+    for element in folder.iterdir():
+        if element.is_dir():
+            if element.name not in target_folders:
+                cleaner(element)
+                try:
+                    element.rmdir()
+                except:
+                    print(f'Directory {element} is not empty. Can not remove')
+                    continue
     return None
 
 
@@ -53,17 +63,11 @@ def normalize(filename) -> str:
 
 def read_folder(path: Path) -> None:
     """ функція рекурсивно обходе всі підпапки та минає цільові директорії"""
-
-    folders = ['images', 'documents', 'audio', 'video', 'archives', ]
-
-
     for element in path.iterdir():
-        if element.is_dir() and element not in folders:
+        if element.is_dir() and element not in target_folders:
             read_folder(element)
         else:
             sort_folder(element)
-            found_folders.append(element)
-
     return None
 
 
@@ -78,7 +82,6 @@ def archive_handler(file: Path) -> None:
     except shutil.ReadError:
         print(f'Це не архів {file}!')
         folder_for_file.rmdir()
-
     return None
 
 
@@ -144,19 +147,22 @@ def sort_folder(folder: Path) -> list:
             normalize(file.name)
             unknown_ext.append(file.suffix)
 
-
-        # try:
-        #     folder.rmdir()
-        # except OSError:
-        #     print(f'Помилка видалення папки {folder}')
-
-
+        print(known_ext)
+        print(unknown_ext)
     return known_ext, unknown_ext
 
 
 if __name__ == '__main__':
+
+    # if len(sys.argv) < 2:
+    #     print(f'The path to folder is not specified. Check arguments.')
+    #     exit()
+    # folder_to_clean = sys.argv[1]
+    # if not Path(folder_to_clean).is_dir():
+    #     print(f'Your argument is not folder. Check arguments.')
+    #     exit()
+
     output_folder = Path('test')
-    print(normalize('ТеСтОвИй ТЕКСТ іїє 12345 <>@#$"".jpg'))
     init(output_folder)
     sort_folder(output_folder)
-    print(found_folders)
+    cleaner(output_folder)
