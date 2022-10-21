@@ -1,5 +1,19 @@
 import re
 import shutil
+import os
+import sys
+from pathlib import Path
+
+def init(folder: Path) -> None:
+    """ функція створює цільові директорії"""
+
+    folders = ['images', 'documents', 'audio', 'video', 'archives', ]
+
+    for element in folders:
+        new_folder = folder / element
+        new_folder.mkdir(exist_ok=True, parents=True)
+
+    return None
 
 
 def normalize(filename) -> str:
@@ -33,19 +47,25 @@ def normalize(filename) -> str:
     return normalized_filename
 
 
-def sort_folder(folder):
+def read_folder(path: Path) -> None:
+    """ функція рекурсивно обходе всі підпапки та минає цільові директорії"""
+
+    folders = ['images', 'documents', 'audio', 'video', 'archives', ]
+
+    for element in path.iterdir():
+        if element.is_dir() and element not in folders:
+            read_folder(element)
+        else:
+            sort_folder(el)
+
+    return None
+
+def sort_folder(folder: Path) -> list:
     """
-    - зображення ('JPEG', 'PNG', 'JPG', 'SVG') переносимо до папки images
-    - документи ('DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX') переносимо до папки documents
-    - аудіо файли ('MP3', 'OGG', 'WAV', 'AMR') переносимо до audio
-    - відео ('AVI', 'MP4', 'MOV', 'MKV') файли до video
-    - архіви ('ZIP', 'GZ', 'TAR') розпаковуються та їх вміст переноситься до папки archives
-
-    !!!
-    Щоб скрипт міг пройти на будь-яку глибину вкладеності,
-    функція обробки папок повинна рекурсивно викликати сама себе, коли їй зустрічаються вкладенні папки.
-
-
+    функція:
+    - переносе файли по директоріях за шаблонами
+    - заповнює списки файлів
+    - заповнює списки відомих та невідомих розширень
     """
 
     # визначаємо розширення за якими будемо сортувати файли
@@ -65,10 +85,11 @@ def sort_folder(folder):
     known_ext = []  # перелік усіх відомих розширень
     unknown_ext = []  # перелік НЕ відомих розширень
 
-    ignore_folders = ['images', 'documents', 'audio', 'video', 'archives', ]
 
-    pass
+    return known_ext, unknown_ext
 
 
 if __name__ == '__main__':
+    output_folder = Path('.')
     print(normalize('ТеСтОвИй ТЕКСТ іїє 12345 <>@#$"".jpg'))
+    init(output_folder)
