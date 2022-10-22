@@ -80,6 +80,8 @@ def archive_handler(file: Path) -> None:
     try:
         shutil.unpack_archive(str(file.resolve()),
                               str(folder_for_file.resolve()))
+        target_folders.append((str(folder_for_file)))
+        print(target_folders)
     except shutil.ReadError:
         print(f'Це не архів {file}!')
         folder_for_file.rmdir()
