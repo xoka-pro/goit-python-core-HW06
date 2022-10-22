@@ -3,8 +3,19 @@ import shutil
 import sys
 from pathlib import Path
 
-
+# === ГЛОБАЛЬНІ ЗМІННІ ===
 target_folders = ['images', 'documents', 'audio', 'video', 'archives', ]
+
+# списки файлів у кожній категорії
+image_files = []
+document_files = []
+audio_files = []
+video_files = []
+archive_files = []
+
+known_ext = []  # перелік усіх відомих розширень
+unknown_ext = []  # перелік НЕ відомих розширень
+# === КІНЕЦЬ ГЛОБАЛЬНИХ ЗМІННИХ ===
 
 
 def init(folder: Path) -> None:
@@ -85,7 +96,7 @@ def archive_handler(file: Path) -> None:
     return None
 
 
-def sort_folder(folder: Path) -> list:
+def sort_folder(folder: Path) -> None:
     """
     функція:
     - переносе файли по директоріях за шаблонами
@@ -100,56 +111,46 @@ def sort_folder(folder: Path) -> list:
     video_ext = ['AVI', 'MP4', 'MOV', 'MKV', ]
     archive_ext = ['ZIP', 'GZ', 'TAR', ]
 
-    # списки файлів у кожній категорії
-    image_files = []
-    document_files = []
-    audio_files = []
-    video_files = []
-    archive_files = []
-
-    known_ext = []  # перелік усіх відомих розширень
-    unknown_ext = []  # перелік НЕ відомих розширень
-
     for file in folder.iterdir():
         if file.suffix[1:].upper() in image_ext:
             image_folder = Path('images')
-            file.replace(image_folder / normalize(file.name))
+            file.replace(folder / image_folder / normalize(file.name))
             known_ext.append(file.suffix)
             image_files.append(file.name)
 
-        if file.suffix[1:].upper() in document_ext:
+        elif file.suffix[1:].upper() in document_ext:
             document_folder = Path('documents')
-            file.replace(document_folder / normalize(file.name))
+            file.replace(folder / document_folder / normalize(file.name))
             known_ext.append(file.suffix)
             document_files.append(file.name)
 
-        if file.suffix[1:].upper() in audio_ext:
+        elif file.suffix[1:].upper() in audio_ext:
             audio_folder = Path('audio')
-            file.replace(audio_folder / normalize(file.name))
+            file.replace(folder / audio_folder / normalize(file.name))
             known_ext.append(file.suffix)
             audio_files.append(file.name)
 
-        if file.suffix[1:].upper() in video_ext:
+        elif file.suffix[1:].upper() in video_ext:
             video_folder = Path('video')
-            file.replace(video_folder / normalize(file.name))
+            file.replace(folder / video_folder / normalize(file.name))
             known_ext.append(file.suffix)
             video_files.append(file.name)
 
-        if file.suffix[1:].upper() in archive_ext:
+        elif file.suffix[1:].upper() in archive_ext:
             archive_folder = Path('archives')
-            new_archive = archive_folder / normalize(file.name)
+            new_archive = folder / archive_folder / normalize(file.name)
             file.replace(new_archive)
             archive_handler(new_archive)
             known_ext.append(file.suffix)
             archive_files.append(file.name)
 
-        if file.suffix[1:].upper() not in image_ext or document_ext or audio_ext or video_ext or archive_ext:
+        else:
+            # file.suffix[1:].upper() not in image_ext and document_ext and audio_ext and video_ext and archive_ext:
             normalize(file.name)
-            unknown_ext.append(file.suffix)
+            if not file.is_dir():
+                unknown_ext.append(file.suffix)
 
-        print(known_ext)
-        print(unknown_ext)
-    return known_ext, unknown_ext
+    return None
 
 
 if __name__ == '__main__':
@@ -164,5 +165,13 @@ if __name__ == '__main__':
 
     output_folder = Path('test')
     init(output_folder)
-    sort_folder(output_folder)
+    read_folder(output_folder)
     cleaner(output_folder)
+
+    print(f'Відомі розширення файлів: {known_ext}')
+    print(f'Невідомі розширення файлів: {unknown_ext}')
+    print(f'Список файлів у категорії "зображення": {image_files}')
+    print(f'Список файлів у категорії "документи": {document_files}')
+    print(f'Список файлів у категорії "музика": {audio_files}')
+    print(f'Список файлів у категорії "відео": {video_files}')
+    print(f'Список файлів у категорії "архіви": {archive_files}')
