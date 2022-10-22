@@ -72,19 +72,9 @@ def normalize(filename) -> str:
     return normalized_filename
 
 
-def read_folder(path: Path) -> None:
-    """ функція рекурсивно обходе всі підпапки та минає цільові директорії"""
-    for element in path.iterdir():
-        if element.is_dir() and element not in target_folders:
-            read_folder(element)
-        else:
-            sort_folder(element)
-    return None
-
-
 def archive_handler(file: Path) -> None:
 
-    folder_for_file = Path(normalize(file.name.replace(file.suffix, '')))
+    folder_for_file = Path(folder_to_clean / 'archives' /normalize(file.name.replace(file.suffix, '')))
     folder_for_file.mkdir(exist_ok=True, parents=True)
 
     try:
@@ -111,44 +101,48 @@ def sort_folder(folder: Path) -> None:
     video_ext = ['AVI', 'MP4', 'MOV', 'MKV', ]
     archive_ext = ['ZIP', 'GZ', 'TAR', ]
 
-    for file in folder.iterdir():
-        if file.suffix[1:].upper() in image_ext:
-            image_folder = Path('images')
-            file.replace(folder / image_folder / normalize(file.name))
-            known_ext.append(file.suffix)
-            image_files.append(file.name)
-
-        elif file.suffix[1:].upper() in document_ext:
-            document_folder = Path('documents')
-            file.replace(folder / document_folder / normalize(file.name))
-            known_ext.append(file.suffix)
-            document_files.append(file.name)
-
-        elif file.suffix[1:].upper() in audio_ext:
-            audio_folder = Path('audio')
-            file.replace(folder / audio_folder / normalize(file.name))
-            known_ext.append(file.suffix)
-            audio_files.append(file.name)
-
-        elif file.suffix[1:].upper() in video_ext:
-            video_folder = Path('video')
-            file.replace(folder / video_folder / normalize(file.name))
-            known_ext.append(file.suffix)
-            video_files.append(file.name)
-
-        elif file.suffix[1:].upper() in archive_ext:
-            archive_folder = Path('archives')
-            new_archive = folder / archive_folder / normalize(file.name)
-            file.replace(new_archive)
-            archive_handler(new_archive)
-            known_ext.append(file.suffix)
-            archive_files.append(file.name)
-
+    for element in folder.iterdir():
+        if element.is_dir() and element not in target_folders:
+            sort_folder(element)
         else:
-            # file.suffix[1:].upper() not in image_ext and document_ext and audio_ext and video_ext and archive_ext:
-            normalize(file.name)
-            if not file.is_dir():
-                unknown_ext.append(file.suffix)
+            for file in folder.iterdir():
+                if file.suffix[1:].upper() in image_ext:
+                    image_folder = Path('images')
+                    file.replace(folder_to_clean / image_folder / normalize(file.name))
+                    known_ext.append(file.suffix)
+                    image_files.append(file.name)
+
+                elif file.suffix[1:].upper() in document_ext:
+                    document_folder = Path('documents')
+                    file.replace(folder_to_clean / document_folder / normalize(file.name))
+                    known_ext.append(file.suffix)
+                    document_files.append(file.name)
+
+                elif file.suffix[1:].upper() in audio_ext:
+                    audio_folder = Path('audio')
+                    file.replace(folder_to_clean / audio_folder / normalize(file.name))
+                    known_ext.append(file.suffix)
+                    audio_files.append(file.name)
+
+                elif file.suffix[1:].upper() in video_ext:
+                    video_folder = Path('video')
+                    file.replace(folder_to_clean / video_folder / normalize(file.name))
+                    known_ext.append(file.suffix)
+                    video_files.append(file.name)
+
+                elif file.suffix[1:].upper() in archive_ext:
+                    archive_folder = Path('archives')
+                    new_archive = folder_to_clean / archive_folder / normalize(file.name)
+                    file.replace(new_archive)
+                    archive_handler(new_archive)
+                    known_ext.append(file.suffix)
+                    archive_files.append(file.name)
+
+                else:
+                    # file.suffix[1:].upper() not in image_ext and document_ext and audio_ext and video_ext and archive_ext:
+                    normalize(file.name)
+                    if not file.is_dir():
+                        unknown_ext.append(file.suffix)
 
     return None
 
@@ -163,10 +157,10 @@ if __name__ == '__main__':
     #     print(f'Your argument is not folder. Check arguments.')
     #     exit()
 
-    output_folder = Path('test')
-    init(output_folder)
-    read_folder(output_folder)
-    cleaner(output_folder)
+    folder_to_clean = Path('test')
+    init(folder_to_clean)
+    sort_folder(folder_to_clean)
+    cleaner(folder_to_clean)
 
     print(f'Відомі розширення файлів: {known_ext}')
     print(f'Невідомі розширення файлів: {unknown_ext}')
