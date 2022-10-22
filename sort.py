@@ -72,7 +72,7 @@ def normalize(filename) -> str:
     return normalized_filename
 
 
-def archive_handler(folder: Path) -> None:
+def archive_handler() -> None:
 
     for file in Path(folder_to_sort / 'archives').iterdir():
 
@@ -149,18 +149,17 @@ def sort_folder(folder: Path) -> None:
 
 if __name__ == '__main__':
 
-    # if len(sys.argv) < 2:
-    #     print(f'The path to folder is not specified. Check arguments.')
-    #     exit()
-    # folder_to_sort = sys.argv[1]
-    # if not Path(folder_to_sort).is_dir():
-    #     print(f'Your argument is not folder. Check arguments.')
-    #     exit()
+    if len(sys.argv) < 2:
+        print(f'The path to folder is not specified. Check arguments.')
+        exit()
+    folder_to_sort = sys.argv[1]
+    if not Path(folder_to_sort).is_dir():
+        print(f'Your argument is not folder. Check arguments.')
+        exit()
 
-    folder_to_sort = Path('test')
     init(folder_to_sort)
     sort_folder(folder_to_sort)
-    archive_handler(folder_to_sort)
+    archive_handler()
     cleaner(folder_to_sort)
 
     known_ext = list(set(known_ext))
