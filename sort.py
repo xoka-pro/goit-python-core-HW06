@@ -152,7 +152,7 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print(f'The path to folder is not specified. Check arguments.')
         exit()
-    folder_to_sort = sys.argv[1]
+    folder_to_sort = Path(sys.argv[1])
     if not Path(folder_to_sort).is_dir():
         print(f'Your argument is not folder. Check arguments.')
         exit()
