@@ -72,19 +72,20 @@ def normalize(filename) -> str:
     return normalized_filename
 
 
-def archive_handler(file: Path) -> None:
+def archive_handler(folder: Path) -> None:
 
-    folder_for_file = Path(folder_to_clean / 'archives' /normalize(file.name.replace(file.suffix, '')))
-    folder_for_file.mkdir(exist_ok=True, parents=True)
+    for file in Path(folder_to_sort / 'archives').iterdir():
 
-    try:
-        shutil.unpack_archive(str(file.resolve()),
-                              str(folder_for_file.resolve()))
-        target_folders.append((str(folder_for_file)))
-        print(target_folders)
-    except shutil.ReadError:
-        print(f'Це не архів {file}!')
-        folder_for_file.rmdir()
+        folder_for_file = Path(folder_to_sort / 'archives' /normalize(file.name.replace(file.suffix, '')))
+        folder_for_file.mkdir(exist_ok=True, parents=True)
+
+        try:
+            shutil.unpack_archive(str(file.resolve()),
+                               str(folder_for_file.resolve()))
+        except shutil.ReadError:
+            print(f'Це не архів {file}!')
+            folder_for_file.rmdir()
+            continue
     return None
 
 
@@ -110,38 +111,35 @@ def sort_folder(folder: Path) -> None:
             for file in folder.iterdir():
                 if file.suffix[1:].upper() in image_ext:
                     image_folder = Path('images')
-                    file.replace(folder_to_clean / image_folder / normalize(file.name))
+                    file.replace(folder_to_sort / image_folder / normalize(file.name))
                     known_ext.append(file.suffix)
-                    image_files.append(file.name)
+                    image_files.append(normalize(file.name))
 
                 elif file.suffix[1:].upper() in document_ext:
                     document_folder = Path('documents')
-                    file.replace(folder_to_clean / document_folder / normalize(file.name))
+                    file.replace(folder_to_sort / document_folder / normalize(file.name))
                     known_ext.append(file.suffix)
-                    document_files.append(file.name)
+                    document_files.append(normalize(file.name))
 
                 elif file.suffix[1:].upper() in audio_ext:
                     audio_folder = Path('audio')
-                    file.replace(folder_to_clean / audio_folder / normalize(file.name))
+                    file.replace(folder_to_sort / audio_folder / normalize(file.name))
                     known_ext.append(file.suffix)
-                    audio_files.append(file.name)
+                    audio_files.append(normalize(file.name))
 
                 elif file.suffix[1:].upper() in video_ext:
                     video_folder = Path('video')
-                    file.replace(folder_to_clean / video_folder / normalize(file.name))
+                    file.replace(folder_to_sort / video_folder / normalize(file.name))
                     known_ext.append(file.suffix)
-                    video_files.append(file.name)
+                    video_files.append(normalize(file.name))
 
                 elif file.suffix[1:].upper() in archive_ext:
                     archive_folder = Path('archives')
-                    new_archive = folder_to_clean / archive_folder / normalize(file.name)
-                    file.replace(new_archive)
-                    archive_handler(new_archive)
+                    file.replace(folder_to_sort / archive_folder / normalize(file.name))
                     known_ext.append(file.suffix)
-                    archive_files.append(file.name)
+                    archive_files.append(normalize(file.name))
 
                 else:
-                    # file.suffix[1:].upper() not in image_ext and document_ext and audio_ext and video_ext and archive_ext:
                     normalize(file.name)
                     if not file.is_dir():
                         unknown_ext.append(file.suffix)
@@ -154,20 +152,29 @@ if __name__ == '__main__':
     # if len(sys.argv) < 2:
     #     print(f'The path to folder is not specified. Check arguments.')
     #     exit()
-    # folder_to_clean = sys.argv[1]
-    # if not Path(folder_to_clean).is_dir():
+    # folder_to_sort = sys.argv[1]
+    # if not Path(folder_to_sort).is_dir():
     #     print(f'Your argument is not folder. Check arguments.')
     #     exit()
 
-    folder_to_clean = Path('test')
-    init(folder_to_clean)
-    sort_folder(folder_to_clean)
-    cleaner(folder_to_clean)
+    folder_to_sort = Path('test')
+    init(folder_to_sort)
+    sort_folder(folder_to_sort)
+    archive_handler(folder_to_sort)
+    cleaner(folder_to_sort)
 
+    known_ext = list(set(known_ext))
     print(f'Відомі розширення файлів: {known_ext}')
+    unknown_ext = list(set(unknown_ext))
+    unknown_ext.remove("")
     print(f'Невідомі розширення файлів: {unknown_ext}')
+    image_files = list(set(image_files))
     print(f'Список файлів у категорії "зображення": {image_files}')
+    document_files = list(set(document_files))
     print(f'Список файлів у категорії "документи": {document_files}')
+    audio_files = list(set(audio_files))
     print(f'Список файлів у категорії "музика": {audio_files}')
+    video_files = list(set(video_files))
     print(f'Список файлів у категорії "відео": {video_files}')
+    archive_files = list(set(archive_files))
     print(f'Список файлів у категорії "архіви": {archive_files}')
