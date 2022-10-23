@@ -183,3 +183,4 @@ if __name__ == '__main__':
 
     general(known_ext, unknown_ext, image_files, document_files, audio_files, video_files, archive_files)
 
+test
