@@ -147,7 +147,7 @@ def sort_folder(folder: Path) -> None:
     return None
 
 
-if __name__ == '__main__':
+def general() -> None:
 
     if len(sys.argv) < 2:
         print(f'The path to folder is not specified. Check arguments.')
@@ -177,3 +177,8 @@ if __name__ == '__main__':
     print(f'Список файлів у категорії "відео": {video_files}')
     archive_files = list(set(archive_files))
     print(f'Список файлів у категорії "архіви": {archive_files}')
+
+    return None
+
+if __name__ == '__main__':
+    general()
