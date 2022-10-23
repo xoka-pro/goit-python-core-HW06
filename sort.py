@@ -144,22 +144,6 @@ def sort_folder(folder: Path) -> None:
                     if not file.is_dir():
                         unknown_ext.append(file.suffix)
 
-    known_ext = list(set(known_ext))
-    print(f'Відомі розширення файлів: {known_ext}')
-    unknown_ext = list(set(unknown_ext))
-    unknown_ext.remove("")
-    print(f'Невідомі розширення файлів: {unknown_ext}')
-    image_files = list(set(image_files))
-    print(f'Список файлів у категорії "зображення": {image_files}')
-    document_files = list(set(document_files))
-    print(f'Список файлів у категорії "документи": {document_files}')
-    audio_files = list(set(audio_files))
-    print(f'Список файлів у категорії "музика": {audio_files}')
-    video_files = list(set(video_files))
-    print(f'Список файлів у категорії "відео": {video_files}')
-    archive_files = list(set(archive_files))
-    print(f'Список файлів у категорії "архіви": {archive_files}')
-
     return None
 
 
@@ -177,6 +161,22 @@ def general() -> None:
     sort_folder(folder_to_sort)
     archive_handler()
     cleaner(folder_to_sort)
+
+    known_ext = list(set(known_ext))
+    print(f'Відомі розширення файлів: {known_ext}')
+    unknown_ext = list(set(unknown_ext))
+    unknown_ext.remove("")
+    print(f'Невідомі розширення файлів: {unknown_ext}')
+    image_files = list(set(image_files))
+    print(f'Список файлів у категорії "зображення": {image_files}')
+    document_files = list(set(document_files))
+    print(f'Список файлів у категорії "документи": {document_files}')
+    audio_files = list(set(audio_files))
+    print(f'Список файлів у категорії "музика": {audio_files}')
+    video_files = list(set(video_files))
+    print(f'Список файлів у категорії "відео": {video_files}')
+    archive_files = list(set(archive_files))
+    print(f'Список файлів у категорії "архіви": {archive_files}')
 
     return None
 
