@@ -76,7 +76,7 @@ def archive_handler() -> None:
 
     for file in Path(folder_to_sort / 'archives').iterdir():
 
-        folder_for_file = Path(folder_to_sort / 'archives' /normalize(file.name.replace(file.suffix, '')))
+        folder_for_file = Path(folder_to_sort / 'archives' / normalize(file.name.replace(file.suffix, '')))
         folder_for_file.mkdir(exist_ok=True, parents=True)
 
         try:
@@ -143,11 +143,10 @@ def sort_folder(folder: Path) -> None:
                     normalize(file.name)
                     if not file.is_dir():
                         unknown_ext.append(file.suffix)
-
     return None
 
 
-def general():
+def general(known_ext, unknown_ext, image_files, document_files, audio_files, video_files, archive_files):
 
     if len(sys.argv) < 2:
         print(f'The path to folder is not specified. Check arguments.')
@@ -179,5 +178,7 @@ def general():
     archive_files = list(set(archive_files))
     print(f'Список файлів у категорії "архіви": {archive_files}')
 
+
 if __name__ == '__main__':
-    general()
+
+    general(known_ext, unknown_ext, image_files, document_files, audio_files, video_files, archive_files)
